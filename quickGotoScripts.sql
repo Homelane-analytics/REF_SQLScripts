@@ -36,3 +36,17 @@ IMPORT DATA FROM EXCEL FILE
 */
 SELECT * FROM OPENROWSET('Microsoft.ACE.OLEDB.12.0','Excel 12.0; Database=C:\\Excel_Files\\REF_Dummy_excel_file.xlsx'
 , [Sheet1$])
+   
+   
+ /*
+SUPER TABLE SPLITTER 
+----------------------------
+*/
+SELECT DISTINCT TH_source
+, parsename(replace(S.a.value('(/H/r)[1]', 'VARCHAR(100)'),'-','.'),1) AS TH1
+into  #THSplitter_SCN103
+FROM
+    (SELECT *,CAST (N'<H><r>' + REPLACE(TH_source, '/', '</r><r>')  + '</r></H>' AS XML) AS [vals] 
+    FROM REF_Reporting_Summary_SCN103
+    ) d 
+CROSS APPLY d.[vals].nodes('/H/r') S(a)
