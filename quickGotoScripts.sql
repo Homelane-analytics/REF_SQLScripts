@@ -1,4 +1,14 @@
 /*
+Drop TABLES
+----------------------------
+*/
+IF OBJECT_ID('tempdb.dbo.#VariableCost', 'U') IS NOT NULL DROP TABLE #VariableCost;
+GO
+IF OBJECT_ID('dbo.VariableCost', 'U') IS NOT NULL DROP TABLE VariableCost;
+GO
+
+
+/*
 DELETE MULTIPLE TABLES
 ----------------------------
 */
@@ -50,3 +60,20 @@ FROM
     FROM REF_Reporting_Summary_SCN103
     ) d 
 CROSS APPLY d.[vals].nodes('/H/r') S(a)
+   
+   
+/*
+COMPARE TABLES FOR String will be truncated error
+----------------------------
+*/
+SELECT t1.Table_Name, t1.Column_Name,t1.Character_maximum_length,t2.Character_maximum_length
+FROM INFORMATION_SCHEMA.Columns t1
+INNER JOIN INFORMATION_SCHEMA.Columns t2 ON (t1.Column_Name = t2.Column_Name)
+WHERE t1.Table_Name = 'DATA_NEW_SH_WIDEOPEN_EORD_2018'
+AND  t2.Table_Name = 'z_ps_showo_dec13'
+AND ISNULL(t1.Character_maximum_length, 0) < ISNULL(t2.Character_maximum_length, 0)
+GO
+   
+   
+   
+   
