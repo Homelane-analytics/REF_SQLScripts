@@ -1,0 +1,26 @@
+CREATE FUNCTION `ps_get_week`(days DATE) RETURNS varchar(50) CHARSET utf8
+    DETERMINISTIC
+BEGIN
+  	DECLARE var_name nvarchar(50);
+    select concat( lpad(week(days,1),2,'0'),'(',day(date_add(days, interval  -WEEKDAY(days)-1 day) ),'-',day(date_add(date_add(days, 
+  	interval  -WEEKDAY(days)-1 day), interval 6 day)),' ',DATE_FORMAT(days,'%b'),')' )CurrentWeekNumber
+  	into var_name;
+  	RETURN var_name
+
+;
+END
+
+
+
+CREATE FUNCTION `ps_extract_integer`(input VARCHAR(255)) RETURNS varchar(255) CHARSET utf8mb4
+BEGIN
+   DECLARE output   VARCHAR(255) DEFAULT '';
+   DECLARE iterator INT          DEFAULT 1;
+   WHILE iterator < (LENGTH(input) + 1) DO
+      IF SUBSTRING(input, iterator, 1) IN ( '0', '1', '2', '3', '4', '5', '6', '7', '8', '9','.' ) THEN
+         SET output = CONCAT(output, SUBSTRING(input, iterator, 1));
+      END IF;
+      SET iterator = iterator + 1;
+   END WHILE;
+   RETURN output;
+END
